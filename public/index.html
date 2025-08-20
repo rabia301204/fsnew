@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style/style.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   
+ <script>
+    $(document).ready(function () {
+      // Show signup modal
+      $("#btn").click(function () {
+        $("#signupWin").fadeIn(200);
+        $("#loginWin").fadeOut(0);
+      });
+
+      // Show login modal
+      $("#btn2").click(function () {
+        $("#loginWin").fadeIn(200);
+        $("#signupWin").fadeOut(0);
+      });
+
+      // Close buttons
+      $("#crossSignup").click(function () {
+        $("#signupWin").fadeOut(200);
+      });
+
+      $("#crossLogin").click(function () {
+        $("#loginWin").fadeOut(200);
+      });
+    
+
+    // <!--validation-->
+
+    
+       $("#txtEmail").keyup(function(){
+        let email=$(this).val().trim();
+        let regex=/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        if(email=== ""){
+            $("#errEmail").html("Empty").addClass("not-ok").removeClass("ok");
+            $("#errPicE").addClass("not-ok-pic").removeClass("ok-pic");
+            $(this).focus();
+        }
+        else if(regex.test(email)==false){
+            $("#errEmail").html("Invalid Email").addClass("not-ok").removeClass("ok");
+            $("#errPicE").addClass("not-ok-pic").removeClass("ok-pic");
+            $(this).focus();
+
+        }
+         else 
+                    {
+                        $("#errEmail").html("Valid Email").addClass("ok").removeClass("not-ok");
+                        $("#errPicE").addClass("ok-pic").removeClass("not-ok-pic");
+                    }
+                })
+      
+       //------
+     $("#txtPwd").keyup(function(){
+    let regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+    let pwd = $(this).val();
+    if (pwd === "") {
+        $("#lblPwd").html("Empty").addClass("not-ok").removeClass("ok");
+    }
+    else if (regex.test(pwd)) {
+        $("#lblPwd").html("Valid Password").addClass("ok").removeClass("not-ok");
+    } else {
+        $("#lblPwd").html("Invalid Password").addClass("not-ok").removeClass("ok");
+    }
+});
+
+$("#eye").click(function(){
+    let txt=$("#txtPwd").prop("type");
+    if(txt=="password")
+{
+    $("#txtPwd").prop("type","text");
+    $("#eye").removeClass("fa-eye").addClass("fa-eye-slash");
+
+}
+else{
+     $("#txtPwd").prop("type","password");
+       $("#eye").removeClass("fa-eye-slash").addClass("fa-eye");
+}
+});
+// data storing  
+
+$("#btnSubmit").click(function () {
+    let emailid = $("#txtEmail").val().trim();
+    let pwd = $("#txtPwd").val().trim();
+    let usertype = $("#usertype").val();
+
+
+    let obj = {
+        type: "get",
+        url: "/signup-one",
+        data: {
+            txtEmail: emailid,
+            txtPwd: pwd,
+            usertype: usertype
+        }
+    };
+
+    $.ajax(obj).then(
+        function (response) {
+            alert(response);  // Success message from Node.js
+        },
+        function (err) {
+            alert("Error: " + err.message);
+        }
+    );
+});
+
+//-----Ajax request
+ $("#loginSubmit").click(function () {
+    let emailid = $("#loginEmail").val().trim();
+    let pwd = $("#loginPass").val().trim();
+
+    $.ajax({
+      url: "/do-login",
+      type: "get",
+      data: {
+        loginEmail: emailid,
+        loginPass: pwd
+      },
+      success: function (res) {
+       
+        if(res=="Blocked"){
+          alert("Sorry! ur id is bloacked");
+      
+        }
+        else if(res=="Invalid"){
+          alert("Invalid emailid or Paasword");
+        }
+        else if(res=="Player")
+        {
+          localStorage.setItem("activeUser",emailid);
+          location.href="dash_player.html";
+        }
+     
+      else if(res=="Organizer"){
+      localStorage.setItem("activeUser",emailid);
+      location.href="dash_org.html";}
+
+else if(res=="Admin"){
+localStorage.setItem("activeUser",emailid);
+location.href="admin_dash.html";}
+
+
+        // shows "Blocked", "Login Successful" or "Wrong emailid / pwd"
+      },
+      error: function (err) {
+        alert("AJAX error");
+        console.log(err);
+      }
+    });
+  });
+    });
+
+    
+   
+  </script>
+</head>
+<body>
+  
+
+  <!-- Navbar -->
+  <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    
+    <!-- Logo (Left) -->
+    <div class="d-flex align-items-center">
+      <img src="pics/logo.jpg" alt="Tizen Logo" style="height: 50px; margin-right: 10px;" />
+    </div>
+
+    <!-- Nav Items (Center) -->
+    <div class="d-none d-lg-block mx-auto">
+      <ul class="navbar-nav flex-row gap-4">
+        <li class="nav-item">
+          <a class="nav-link active text-white" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active text-white" href="#">Our Services</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active text-white" href="#">Reach Us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active text-white" href="#">Contact</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Buttons (Right) -->
+    <div class="d-flex gap-3 me-3">
+      <button class="btn btn-primary nav-btn px-4 py-2" id="btn">Signup</button>
+      <button class="btn btn-success nav-btn px-4 py-2" id="btn2">Login</button>
+    </div>
+
+  </div>
+</nav>
+
+
+    <!--top buttons -->
+      <!-- <center>
+        <input type="button" value="Signup" id="btn">
+        <input type="button" value="Login" id="btn2"> -->
+        <!-- <input type="button" value="Organizer Dashboard" onclick="location.href='./dash_org.html'">
+        <input type="button" value="Player Dashboard" onclick="location.href='./dash_player.html'">
+         <input type="button" value="Admin Dashboard" onclick="location.href='./admin_dash.html'"> -->
+
+    <!-- </center> -->
+
+    <!-- Signup modal form-->
+    
+<div id="signupWin" class="modal-box">
+  <div id="crossSignup" class="cross-btn"></div>
+  <p class="form-title">Signup</p>
+  <div id="form">
+    <div class="form-row">
+      <label >Email Id</label><br>
+      <input type="text" id="txtEmail" name="txtEmail">
+      <div style="display:flex;">
+       <div style="margin-right: 10px;" id="errPicE"></div> 
+      <div id="errEmail"></div>
+
+    </div>
+    </div>
+    </div>
+   
+    <br>
+
+    <div class="form-row">
+      <label >Password</label><br>
+      <div class="pwd-e">
+      <input type="password" id="txtPwd" name="txtPwd">
+       <i class="fa-solid fa-eye"  id="eye"></i>
+       </div>
+       <div id="lblPwd"></div>
+    </div><br>
+
+
+    <div class="form-row">
+      <label>User Type</label><br>
+      <select id="usertype">
+        <option>Choose...</option>
+        <option value="Player">Player</option>
+        <option value="Organizer">Organizer</option>
+         
+      </select>
+    </div>
+    <br>
+
+
+    <div class="form-row mt-2  d-flex justify-content-center">
+      <input type="button" id="btnSubmit" value="Register">
+    </div>
+  </div>
+
+<!--login modal-->
+   
+          <div id="loginWin" class="modal-box">
+    <div id="crossLogin" class="cross-btn"></div>
+    <p class="form-title">Login</p>
+    <div id="form">
+      <div class="form-row">
+        <label>Email ID</label><br />
+        <input type="text" id="loginEmail" />
+      </div><br />
+
+      <div class="form-row">
+        <label>Password</label><br />
+        <input type="password" id="loginPass" />
+       
+      </div>
+      <br>
+      <div><a href="#" data-bs-toggle="modal" data-bs-target="#editSettingsModal">Forgot Password?</a></div>
+
+
+
+      <div  class="form-row mt-5 d-flex justify-content-center ">
+        <input type="button" id="loginSubmit" value="Login" />
+      </div>
+    </div>
+  </div>
+  <!-- //sliders -->
+
+<div id="carouselExampleDark" class="carousel carousel-dark slide">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active" data-bs-interval="10000">
+      <img src="pics/sport1.jpg" class="d-block w-100" alt="...">
+      <div class="carousel-caption d-none d-md-block">
+        
+      </div>
+    </div>
+    <div class="carousel-item" data-bs-interval="2000">
+      <img src="pics/s4.jpg" class="d-block w-100 " alt="...">
+      <div class="carousel-caption d-none d-md-block">
+        
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="pics/s5.jpg" class="d-block w-100" alt="...">
+      <div class="carousel-caption d-none d-md-block">
+        
+        
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<div class="ser">
+  <b><b>Our Services</b></p>
+</div>
+ <!-- OUR SERVICES -->
+<div class="d-flex justify-content-center gap-5 flex-wrap mt-5">
+  <div class="card service-card" style="width: 22rem;">
+    <img src="pics/register.jpg" class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5  class="card-title"> Register Organization</h5>
+      <p class="card-text">Bring your events to life. Easily create and publish new tournaments, matches,
+                        or gatherings directly on our platform. Reach a wider audience and attract participants with our
+                        intuitive event posting features."
+
+                    </p>
+    </div>
+  </div>
+
+  <div class="card service-card" style="width: 22rem;">
+    <img src="pics/post.jpg" class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5  class="card-title"> Post Events</h5>
+      <p class="card-text">Organize and publish your sports events with ease.
+Our platform lets you create tournaments, matches, and gatherings in minutes.
+Promote your events to a wider audience .
+
+Perfect for schools, colleges, clubs, and independent organizers.
+
+                    </p>
+    </div>
+  </div>
+
+  <div class="card service-card" style="width: 22rem;">
+    <img src="pics/discover.jpg" class="card-img-top" alt="...">
+    <div class="card-body">
+       <h5  class="card-title"> Discover Nearby Events</h5>
+      <p class="card-text">Stay updated with the latest sports events happening around you.
+Find tournaments, matches, and activities based on your location and interests.
+Join local events, connect with fellow athletes, and grow your network.
+
+
+
+                    </p>
+    </div>
+  </div>
+</div>
+<!-- our vision -->
+<div class="ser ">
+  <b><b>Our Mission</b></p>
+</div>
+<div class="container mission my-5">
+  <div class="row align-items-center">
+
+    <!-- Left Column: Image -->
+    <div class="col-md-6">
+      <img src="pics/mission.jpg" class="img-fluid rounded shadow" alt="Mission">
+    </div>
+
+    <!-- Right Column: Paragraph -->
+    <div class="col-md-6">
+      <p class="fs-5 mt-3 mt-md-0">
+        To revolutionize sports participation and event management by empowering players, organizers, and communities with a smart, seamless, and inclusive platform that connects, engages, and inspires through the spirit of competition and collaboration.
+      </p>
+    </div>
+
+  </div>
+</div>
+<!-- Meet the developer -->
+ <div class="ser ">
+  <b><b>Reach Us</b></p>
+</div>
+<div>
+  <div>
+    
+  </div>
+</div>
+
+
+
+
+
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "fsnew",
+  "version": "1.0.0",
+  "description": "1 two button of signup nd login\r 2 then signup nd login modal\r 3 validation\r 4 connecting to cludinary aiven nd mysql\r 5 download \r npm init -y\r npm install mysql2\r npm i express",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "express": "^5.1.0",
+    "express-fileupload": "^1.5.2",
+    "mysql2": "^3.14.2",
+    "nodemon": "^3.1.10"
+  }
+}

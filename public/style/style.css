@@ -1,0 +1,203 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f8f8f8;
+
+}
+  .cross-btn{
+            width: 30px; height: 30px; background-image: url(/pics/redcross.jpg);background-size: contain;
+            float: right; cursor: pointer;background-repeat:no-repeat;
+        }  
+input[type="button"] {
+  padding: 10px 20px;
+  margin: 10px;
+  background-color: rgb(30, 26, 27);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  
+}
+
+#btn2{
+    background-color: #02AEFF;
+    
+
+}
+
+
+
+
+
+#btn{
+   background-color: #02AEFF;
+
+}
+/* Fullscreen dark background overlay */
+.modal-box {
+  display: none;             /* hidden by default */
+  position: fixed;           /* sit on top of everything */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6); /* dim background */
+  z-index: 2000;             /* above navbar, carousel */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Inner modal content */
+.modal-box .modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0px 8px 25px rgba(0,0,0,0.4);
+  min-width: 350px;
+  max-width: 450px;
+  position: relative;
+}
+
+/* Close button */
+.cross-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 22px;
+  color: #333;
+  cursor: pointer;
+}
+
+.cross-btn:hover {
+  color: red;
+}
+
+/* Form title */
+.form-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modal-box {
+  height: 450px;
+  width: 450px;
+  padding: 25px;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+  position: fixed;
+  top: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+.carousel-item img {
+  height: 500px; /* or any desired height */
+  object-fit: cover;
+}
+.ser{
+   background: linear-gradient(
+    to right,
+    rgba(214, 217, 220, 0.7),
+    rgba(216, 216, 216, 0.7)
+  );
+  border-radius: 10px;
+  margin-top: 15px;
+  text-align: center;
+  font-family:Georgia, 'Times New Roman', Times, serif;
+  font-size: 55px;
+ color: rgb(4, 4, 79);
+
+}
+.service-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  width:22rem;
+ 
+  
+}
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+.mission{
+  background:linear-gradient(
+    to right,
+     rgba(214, 217, 220, 0.7),
+    rgba(216, 216, 216, 0.7)
+
+  );
+}
+.card-title{
+  font-size: 25px;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.card-text{
+  color:grey;
+  font-family:sans-serif ;
+}
+
+.form-title {
+  font-weight: bold;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+input[type="text"],
+input[type="password"],
+select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width:90%;
+}
+input[type="submit"] {
+  background-color: rgb(157, 170, 183); 
+  color: rgb(0, 0, 0);
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* for validation*/
+.ok{
+    color:green;display: right;font-size: 13px;
+
+}
+.not-ok{
+    color:red;padding:1px; border-radius:2px;font-size: 13px;
+}
+.ok-pic{
+    width:20px; height:20px;background-image:url(/pics/tickok.png) ;background-size: contain;background-repeat: no-repeat;
+
+}
+.not-ok-pic{
+    width:16px;height:16px;background-image: url(/pics/redcross.jpg); background-size: contain;background-repeat: no-repeat;
+
+
+}
+.pwd-e {
+  position: relative;
+  width: 100%;
+}
+
+
+.pwd-e #eye {
+  position: absolute;
+  top: 50%;
+  right: 38px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+  padding-right: 12px;
+}
+
+
+
+

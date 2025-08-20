@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>manage events</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+     <script>
+        var mymodule= angular.module("kuchModule",[]);
+      
+      mymodule.controller("kuchController",function($scope,$http)
+      {
+
+        $scope.jsonArray=[];
+     
+       
+        //fetch details
+
+       $scope.doFetchAll=function()
+{
+    //    {
+    //     if(!$scope.emailid){
+    //         alert("please enter ur email id");
+    //         return ;
+    //     }
+
+            var url="/do-fetch-all-users?emailid="+localStorage.getItem("activeUser");
+
+            
+            $http.get(url).then(allGoodFx,someBadFx);
+            function allGoodFx(response)
+            {
+                //resp in JSON array
+                //alert(JSON.stringify(response.data));
+                $scope.jsonArray=response.data;
+                
+            }
+
+            function someBadFx(response)
+            {
+                alert(JSON.stringify(response.data));
+            }
+       }
+       //----------------------for detail
+       $scope.doDelete=function(rid)
+       {
+     
+            var url="/delete-one?rid="+rid;
+            
+            $http.get(url).then(allGoodFx,someBadFx);
+            function allGoodFx(response)
+            {
+               alert(response.data);//resp in string
+                $scope.doFetchAll();
+            }
+
+            function someBadFx(response)
+            {
+                alert(JSON.stringify(response.data));
+            }
+
+       }
+
+
+       })
+       function showUser(){
+        let activeUser=localStorage.getItem("activeUser");
+        document.getElementById("welcome").innerHTML=activeUser;
+       }
+     </script>
+</head>
+
+<body ng-controller="kuchController" ng-app="kuchModule" ng-init="doFetchAll()">
+    <div class="controller">
+        <div class="card p-4">
+            <h3 class="text-center fw-bold mb-4"> Manage Your Tournaments</h3>
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Enter Your Email ID" ng-model="emailid">
+
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-danger w-100" ng-click="doFetchAll()">Fetch</button>
+                </div>
+            </div>
+            <!--poster tournamnet form-->
+            <div ng-if="jsonArray.length >0">
+                <h5 class="text-center fw-semibold mb-3"> Posted Tournament</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col">Sr.No</th>
+                                <th scope="col">Event</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">City</th>
+                                <th scope="col">Sports</th>
+                                <th scope="col">Age</th>
+                                <th scope="col">Fee</th>
+                                <th scope="col">Prize</th>
+                                <th scope="col">Contact</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                         <tr ng-repeat="obj in jsonArray">
+            <td scope="row">{{$index+1}}</td>
+         
+            <td>{{obj.eventTitle}}</td>
+            <td>{{obj.eventDate}}</td>
+            <td>{{obj.eventTime}}</td>
+            <td>{{obj.eventCity}}</td>
+            <td>{{obj.eventSport}}</td>
+            <td>{{obj.eventmin}}-{{obj.eventmax}}</td>
+            <td>{{obj.eventfee}}</td>
+            <td>{{obj.eventmoney}}</td>
+            <td>{{obj.eventcnt}}</td>
+            
+          
+            <th>
+                <input type="button" ng-click="doDelete(obj.rid);" value="Remove">
+            </th>
+
+        </tr>
+                       
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center text-muted mt-4" ng-if="jsonArray.length=== 0 && searchedOnce">
+        No Tournaments found for this email.
+    </div>
+    
+</body>
+</html>
