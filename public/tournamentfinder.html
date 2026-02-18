@@ -3,130 +3,277 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>all tournament registered</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
-      crossorigin="anonymous"
-    />
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
-      crossorigin="anonymous"
-    ></script>
+    <title>All Registered Tournaments</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-  
+    <style>
+      * { font-family: 'Nunito', sans-serif; }
+
+      body { background: #f0f4ff; }
+
+      /* HEADER */
+      .hero-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        padding: 38px 20px 32px;
+        text-align: center;
+        margin-bottom: 35px;
+      }
+      .hero-header h2 {
+        color: #fff;
+        font-weight: 900;
+        font-size: 2rem;
+        margin: 0;
+        letter-spacing: 0.5px;
+      }
+      .hero-header p {
+        color: rgba(255,255,255,0.7);
+        margin: 6px 0 0;
+        font-size: 0.9rem;
+      }
+
+      /* CARDS */
+      .t-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.1);
+        border: 2px solid transparent;
+        transition: all 0.25s;
+        height: 100%;
+      }
+      .t-card:hover {
+        border-color: #667eea;
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(102,126,234,0.2);
+      }
+      .sport-pill {
+        display: inline-block;
+        background: #f0f4ff;
+        color: #667eea;
+        border-radius: 20px;
+        padding: 3px 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border: 1.5px solid #e8ecff;
+        margin-bottom: 10px;
+      }
+      .t-card h5 {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #2d2d2d;
+        margin-bottom: 5px;
+        word-break: break-all;
+      }
+      .t-card .city-text {
+        color: #888;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 14px;
+      }
+      .btn-details {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        border: none;
+        border-radius: 9px;
+        padding: 7px 0;
+        font-size: 0.85rem;
+        font-weight: 700;
+        width: 100%;
+        transition: opacity 0.2s;
+      }
+      .btn-details:hover { opacity: 0.88; color: #fff; }
+
+      /* MODAL */
+      .modal-content {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      }
+      .modal-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        padding: 20px 25px;
+      }
+      .modal-header .modal-title { color: #fff; font-weight: 800; font-size: 1.1rem; }
+      .modal-header .btn-close { filter: brightness(0) invert(1); opacity: 0.85; }
+      .modal-body { padding: 22px 25px; background: #fff; }
+
+      .detail-row {
+        display: flex;
+        gap: 10px;
+        padding: 9px 0;
+        border-bottom: 1px solid #f0f0f0;
+        align-items: flex-start;
+      }
+      .detail-row:last-child { border-bottom: none; }
+      .detail-key {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #667eea;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        min-width: 130px;
+      }
+      .detail-val {
+        font-size: 0.9rem;
+        color: #333;
+        font-weight: 600;
+      }
+      .modal-footer {
+        background: #f8f9ff;
+        border-top: 1px solid #eef;
+        padding: 14px 25px;
+      }
+      .btn-close-mod {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        border: none;
+        border-radius: 9px;
+        padding: 8px 24px;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .btn-save {
+        background: #f0f4ff;
+        color: #667eea;
+        border: 2px solid #e8ecff;
+        border-radius: 9px;
+        padding: 8px 24px;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+
+      /* EMPTY STATE */
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #aaa;
+      }
+      .empty-state .icon { font-size: 3.5rem; margin-bottom: 15px; }
+    </style>
+
     <script>
       var mymodule = angular.module("kuchModule", []);
 
       mymodule.controller("kuchController", function ($scope, $http) {
         $scope.jsonArray = [];
-      
 
         $scope.doFetchAll = function () {
           var url = "/do-fetch-all-tour";
-
-         
           $http.get(url).then(allGoodFx, someBadFx);
+
           function allGoodFx(response) {
-            //resp in JSON array
-            alert(JSON.stringify(response.data));
             $scope.jsonArray = response.data;
           }
-
           function someBadFx(response) {
             alert(JSON.stringify(response.data));
           }
         };
-        //----------------------
-        
-        //==================================================
-        $scope.oneRecord={};
-        $scope.doShowDetails=function(index)
-        {
-            //alert(JSON.stringify($scope.jsonArray[index]))
-            $scope.oneRecord=$scope.jsonArray[index];
 
-        }
-    });
+        $scope.oneRecord = {};
+        $scope.doShowDetails = function (index) {
+          $scope.oneRecord = $scope.jsonArray[index];
+        };
+      });
     </script>
   </head>
-  <body
-    ng-app="kuchModule"
-    ng-controller="kuchController"
-    ng-init="doFetchAll();"
-  >
-    <center>
-      <hr />
-      
-      <h2>All  RegisteredTournamnts Details </h2>
 
-      <div class="container">
-        <div class="row">
-          <div
-            class="col-md-3  p-3 mb-2"      ng-repeat="obj in jsonArray" >
-            <div class="card" >
-              
-           
+  <body ng-app="kuchModule" ng-controller="kuchController" ng-init="doFetchAll();">
 
-              <div class="card-body">
-                <h5 class="card-title">
-                    {{obj.eventEmail}}
-                </h5>
-                <p class="card-text">
-                  {{obj.eventCity}}
-                </p>
-                <p class="card-text">
-                  {{obj.eventSport}}
-                </p>
-                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detailsModal" ng-click="doShowDetails($index);">Details</a>
-              </div>
-            </div>
+    <!-- HEADER -->
+    <div class="hero-header">
+      <h2>🏆 All Registered Tournaments</h2>
+      <p>Browse all available tournaments below</p>
+    </div>
+
+    <div class="container pb-5">
+
+      <!-- CARDS — ng-if hides null/empty records -->
+      <div class="row g-4">
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3"
+          ng-repeat="obj in jsonArray"
+          ng-if="obj.eventEmail && obj.eventCity && obj.eventSport">
+          <div class="t-card">
+            <div class="sport-pill">⚽ {{obj.eventSport}}</div>
+            <h5>{{obj.eventEmail}}</h5>
+            <p class="city-text">📍 {{obj.eventCity}}</p>
+            <button class="btn-details" data-bs-toggle="modal" data-bs-target="#detailsModal"
+              ng-click="doShowDetails($index);">View Details →</button>
           </div>
         </div>
       </div>
 
-      <!-- ************************** -->
-       
-<!-- Modal -->
-<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">tournament details</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <!-- EMPTY STATE -->
+      <div class="empty-state" ng-if="jsonArray.length === 0">
+        <div class="icon">🏟️</div>
+        <p>No tournaments found.</p>
       </div>
-      <div class="modal-body">
-     
-        <p>
-            Emailid : {{oneRecord.eventEmail}}<br>
-          Event Title : {{oneRecord.eventTitle}}<br>
-            Event Date: {{oneRecord.eventDate}}<br>
-            City: {{oneRecord.eventCity}}<br>
-          Time : {{oneRecord.eventTime}}<br>
-           Address : {{oneRecord.eventAdd}}<br>
-           Sports : {{oneRecord.eventSport}}<br>
-            Age : {{oneRecord.eventmin}}-{{oneRecord.eventmax}}<br>
-          Money: {{oneRecord.eventmoney}}<br>
-            Conatct : {{oneRecord.eventcnt}} <br>
 
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+    </div>
+
+    <!-- MODAL — 100% same fields as original -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">🏆 Tournament Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="detail-row">
+              <span class="detail-key">Email ID</span>
+              <span class="detail-val">{{oneRecord.eventEmail}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Event Title</span>
+              <span class="detail-val">{{oneRecord.eventTitle}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Event Date</span>
+              <span class="detail-val">{{oneRecord.eventDate}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">City</span>
+              <span class="detail-val">{{oneRecord.eventCity}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Time</span>
+              <span class="detail-val">{{oneRecord.eventTime}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Address</span>
+              <span class="detail-val">{{oneRecord.eventAdd}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Sport</span>
+              <span class="detail-val">{{oneRecord.eventSport}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Age Group</span>
+              <span class="detail-val">{{oneRecord.eventmin}} - {{oneRecord.eventmax}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Prize Money</span>
+              <span class="detail-val">₹ {{oneRecord.eventmoney}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Contact</span>
+              <span class="detail-val">{{oneRecord.eventcnt}}</span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-close-mod" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn-save">Save Changes</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-      
-
-    </center>
   </body>
 </html>

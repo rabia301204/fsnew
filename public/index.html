@@ -157,7 +157,33 @@ location.href="admin_dash.html";}
       }
     });
   });
+   $("#btnContact").click(function () {
+
+    let name = $("#userName").val();
+    let email = $("#userEmail").val();
+    let msg = $("#userMessage").val();
+
+    $.ajax({
+        url: "/save-contact",
+        type: "get",
+        data: {
+            name: name,
+            email: email,
+            msg: msg
+        },
+        success: function (res) {
+            alert(res);
+        },
+        error: function () {
+            alert("Error saving data");
+        }
     });
+
+});
+    });
+
+   
+
 
     
    
@@ -183,13 +209,13 @@ location.href="admin_dash.html";}
           <a class="nav-link active text-white" href="#">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active text-white" href="#">Our Services</a>
+          <a class="nav-link active text-white" href="#serve">Our Services</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active text-white" href="#">Reach Us</a>
+          <a class="nav-link active text-white" href="#reach">Reach Us</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active text-white" href="#">Contact</a>
+          <a class="nav-link active text-white" href="#con">Contact</a>
         </li>
       </ul>
     </div>
@@ -296,7 +322,7 @@ location.href="admin_dash.html";}
   </div>
   <div class="carousel-inner">
     <div class="carousel-item active" data-bs-interval="10000">
-      <img src="pics/sport1.jpg" class="d-block w-100" alt="...">
+      <img src="pics/ppp.jpg" class="d-block w-100" alt="...">
       <div class="carousel-caption d-none d-md-block">
         
       </div>
@@ -325,7 +351,7 @@ location.href="admin_dash.html";}
   </button>
 </div>
 
-<div class="ser">
+<div class="ser " id="serve">
   <b><b>Our Services</b></p>
 </div>
  <!-- OUR SERVICES -->
@@ -392,12 +418,61 @@ Join local events, connect with fellow athletes, and grow your network.
   </div>
 </div>
 <!-- Meet the developer -->
- <div class="ser ">
+ <div class="ser"id="reach">
   <b><b>Reach Us</b></p>
 </div>
 <div>
   <div>
     
+  <div class="container mb-5">
+    <div class="row g-4">
+
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title text-success"><i class="fas fa-map-marker-alt me-2"></i>Location</h5>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d859.2937839767154!2d76.65977775817477!3d30.516086454976772!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390fc32344a6e2d7%3A0x81b346dee91799ca!2sChitkara%20University!5e0!3m2!1sen!2sin!4v1753246257184!5m2!1sen!2sin"
+              width="500" height="300" style="border:0;" allowfullscreen="" loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title text-success"><i class="fas fa-envelope me-2"></i>Contact Info</h5>
+            <form id="contactForm">
+
+  <p>Email: rabiadabr@gmail.com</p>
+  <p>Phone: +91 9592519041</p>
+  <hr>
+
+  <div class="mb-3">
+    <label class="form-label">Enter Your Name</label>
+    <input type="text" class="form-control" id="userName">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Email</label>
+    <input type="email" class="form-control" id="userEmail">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Message</label>
+    <textarea class="form-control" id="userMessage" rows="4"></textarea>
+  </div>
+
+  <button type="button" class="btn btn-primary" id="btnContact">
+    Send Message
+  </button>
+
+</form>
+
+
+          </div>
+        </div>
+      </div>
   </div>
 </div>
 

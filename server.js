@@ -5,8 +5,8 @@ var fileuploader=require("express-fileupload");
 var app=express();
 
 
- const genAI = new GoogleGenerativeAI("AIzaSyC7aogaEG4Lh5rhIJG2nfjtq3cBxt5bp9M");
- const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+ const genAI = new GoogleGenerativeAI("AIzaSyCRDU-ymtE--ynB6QRrqlOJXEaX-JBd2EA");
+ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
 var cloudinary=require("cloudinary").v2;
 var mysql2=require("mysql2");
@@ -362,174 +362,165 @@ app.get("/delete-one",function(req,res)
 
     })
 }) 
-app.get("/do-fetch-all-users",function(req,res)
-{
-let emailid=req.query.emailid
-        mySqlVen.query("select * from postevent where eventEmail = ?",[emailid],function(err,allRecords)
-        {
-                    res.send(allRecords);
-        })
-})
+app.get("/do-fetch-all-users", function(req, res) {
+    mySqlVen.query("SELECT * FROM postevent", function(err, allRecords) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("DB error");
+        }
+        res.send(allRecords);
+    });
+});
 //ai
 
 
 
 
   
-async function RajeshBansalKaChirag(imgurl) {
-    const myprompt = "Read the text on picture and tell all the information in adhaar card and give output STRICTLY in JSON format {adhaar_number:'', name:'', gender:'', dob: ''}. Dont give output as string.";
-    const imageResp = await fetch(imgurl).then((response) => response.arrayBuffer());
+app.post("/profile-player", async function(req, res) {
 
-    const result = await model.generateContent([
-        {
-            inlineData: {
-                data: Buffer.from(imageResp).toString("base64"),
-                mimeType: "image/jpeg",
-            },
-        },
-        myprompt,
-    ]);
+    let adharpic = "";
+    let profilepic = "";
 
-    const cleaned = result.response.text().replace(/json|/g, '').trim();
-    const jsonData = JSON.parse(cleaned);
-    return jsonData;
-}
-app.post("/profile-player", async function(req,res){
-    
-    let adharpic="";
-    let jsonData={};
-
-
-    if(req.files!=null){
-       let fName=req.files.adharpic.name;
-        let fullpath=__dirname+"/public/pics/"+fName;
-        req.files.adharpic.mv(fullpath);
-        await cloudinary.uploader.upload(fullpath).then(function(picUrlResult){
-            adharpic=picUrlResult.url;
-            console.log(adharpic);
-            
-        });
-    }
-    else
-        adharpic="nopic.jpg";
-
-    let profilepic="";
-    if (req.files != null) {
-        let fName = req.files.profilepic.name;
-        let fullPath = __dirname + "/public/pics/" + fName;
-        req.files.profilepic.mv(fullPath);
-
-       try{
-        await cloudinary.uploader.upload(fullPath).then(async function (picUrlResult) {
-                
-            let jsonData=await RajeshBansalKaChirag( picUrlResult.url);
-            
-            res.send(jsonData);
-
-        });
-
-        //var respp=await run("https://res.cloudinary.com/dfyxjh3ff/image/upload/v1747073555/ed7qdfnr6hez2dxoqxzf.jpg", myprompt);
-        // resp.send(respp);
-        // console.log(typeof(respp));
+    try {
+        // Handle Aadhaar pic
+        if (req.files && req.files.adharpic) {
+            let fName = req.files.adharpic.name;
+            let fullpath = __dirname + "/public/pics/" + fName;
+            await req.files.adharpic.mv(fullpath);
+            const picUrlResult = await cloudinary.uploader.upload(fullpath);
+            adharpic = picUrlResult.url;
+            console.log("Aadhaar pic uploaded:", adharpic);
+        } else {
+            adharpic = "nopic.jpg";
         }
-        catch(err)
-        {
-            res.send(err.message)
-        }}
-       
 
-    
-    else {
-        profilepic = "nopic.jpg";
-    }
+        // Handle Profile pic
+        if (req.files && req.files.profilepic) {
+            let fName = req.files.profilepic.name;
+            let fullpath = __dirname + "/public/pics/" + fName;
+            await req.files.profilepic.mv(fullpath);
+            const picUrlResult = await cloudinary.uploader.upload(fullpath);
+            profilepic = picUrlResult.url;
+            console.log("Profile pic uploaded:", profilepic);
+        } else {
+            profilepic = "nopic.jpg";
+        }
 
+        // Get all form fields manually
+        let emailid   = req.body.emailid;
+        let name      = req.body.name;
+        let dob       = req.body.dob;
+        let gender    = req.body.gender;
+        let address   = req.body.address;
+        let contact   = req.body.contact;
+        let game      = req.body.game;
+        let otherinfo = req.body.otherinfo;
 
+        // Save to MySQL
+        mySqlVen.query(
+            "INSERT INTO players VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [emailid, adharpic, profilepic, name, dob, gender, address, contact, game, otherinfo],
+            function (err) {
+                if (err == null) {
+                    res.send("Player record successfully saved!");
+                } else {
+                    res.send(err.message);
+                }
+            }
+        );
 
-       
-    let emailid=req.body.emailid;
-    //let name=req.body.name;
-
-     
-    let address=req.body.address;
-   
-    let contact=req.body.contact;
-    let game=req.body.game;
-    let otherinfo=req.body.otherinfo;
-   
-
-
-
- 
-
-mySqlVen.query("INSERT into players values(?,?,?,?,?,?,?,?,?,?)",[emailid,adharpic,profilepic, jsonData.name, jsonData.dob,jsonData.gender,address,contact,game,otherinfo],function(err){
-    if(err==null){
-        res.send("players record successfully saved!!");
-    }
-    else{
-        res.send(err);
+    } catch (err) {
+        console.error(err);
+        res.send("Error: " + err.message);
     }
 });
 
-});
-app.post("/update-player",async function(req,res){
-    let adharpic= "";
-    if(req.files!=null){
-        let fName=req.files.adharpic.name;
-        let fullpath=__dirname+"/public/pics/"+fName;
-        req.files.adharpic.mv(fullpath);
-        await cloudinary.uploader.upload(fullpath).then (function(picUrlResult){
-            adharpic=picUrlResult.url;
-            console.log(adharpic);
-        });
+
+app.post("/update-player", async function(req, res) {
+
+    let adharpic = "";
+    let profilepic = "";
+
+    try {
+        // Handle Aadhaar pic
+        if (req.files && req.files.adharpic) {
+            let fName = req.files.adharpic.name;
+            let fullpath = __dirname + "/public/pics/" + fName;
+            await req.files.adharpic.mv(fullpath);
+            const picUrlResult = await cloudinary.uploader.upload(fullpath);
+            adharpic = picUrlResult.url;
+        } else {
+            adharpic = req.body.hdn;
+        }
+
+        // Handle Profile pic
+        if (req.files && req.files.profilepic) {
+            let fName = req.files.profilepic.name;
+            let fullpath = __dirname + "/public/pics/" + fName;
+            await req.files.profilepic.mv(fullpath);
+            const picUrlResult = await cloudinary.uploader.upload(fullpath);
+            profilepic = picUrlResult.url;
+        } else {
+            profilepic = req.body.hdn2;
+        }
+
+        // Get all form fields manually
+        let emailid   = req.body.emailid;
+        let name      = req.body.name;
+        let dob       = req.body.dob;
+        let gender    = req.body.gender;
+        let address   = req.body.address;
+        let contact   = req.body.contact;
+        let game      = req.body.game;
+        let otherinfo = req.body.otherinfo;
+
+        // Update MySQL
+        mySqlVen.query(
+            "UPDATE players SET adharpic=?, profilepic=?, name=?, dob=?, gender=?, address=?, contact=?, game=?, otherinfo=? WHERE emailid=?",
+            [adharpic, profilepic, name, dob, gender, address, contact, game, otherinfo, emailid],
+            function (err, result) {
+                if (err == null) {
+                    if (result.affectedRows == 1) {
+                        res.send("Updated successfully");
+                    } else {
+                        res.send("Invalid email id");
+                    }
+                } else {
+                    res.send(err.message);
+                }
+            }
+        );
+
+    } catch (err) {
+        console.error(err);
+        res.send("Error: " + err.message);
     }
-    else
-    adharpic=req.body.hdn;
-
- let profilepic= "";
-    if(req.files!=null){
-        let fName=req.files.profilepic.name;
-        let fullpath=__dirname+"/public/pics/"+fName;
-        req.files.profilepic.mv(fullpath);
-        await cloudinary.uploader.upload(fullpath).then (function(picUrlResult){
-            profilepic=picUrlResult.url;
-            console.log(profilepic);
-        });
-    }
-    else
-    profilepic=req.body.hdn2;
-
-    let emailid=req.body.emailid;
-    //let name=req.body.name;
-
-     
-    let address=req.body.address;
-   
-    let contact=req.body.contact;
-    let game=req.body.game;
-    let otherinfo=req.body.otherinfo;
-
-    mySqlVen.query("update players set emailid=?,address=?,contact=?,game=?,otherinfo=? where emailid=?",[adharpic,profilepic,name,dob,gender,addresss,contact,game,otherinfo,emailid],function(errkuch,result)
-    {
-        if(errkuch == null)
-        {
-            if(result.affectedRows==1){
-                res.send("updated successfully");}
-                else {
-                    res.send("invalid email id");
-                
-            }}
-            else{
-                res.send(errkuch.message)}
-
-            
 });
 
-    });
-app.get("/fetch-player-details", function (req, resp) {
-    mySqlVen.query("select * from players where emailid=?", [req.query.orgEmail], function (err, allRecords) {
-        if (allRecords.length == 0)
-            resp.send("No Record Found");
-        else
-            resp.json(allRecords);
+
+app.get("/do-fetch-players", function (req, resp) {
+    mySqlVen.query("select * from players", function (err, allRecords) {
+        console.log(req.query);
+        resp.send(allRecords); //aise error pta lga skte h(localhost:2004/do-fetch-all-users)
     })
 })
+//save contact
+app.get("/save-contact", function (req, res) {
+
+    let name = req.query.name;
+    let email = req.query.email;
+    let msg = req.query.msg;
+
+    let sql = "INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)";
+
+    mySqlVen.query(sql, [name, email, msg], function (err) {
+        if (err) {
+            console.log(err);
+            res.send("DB Error");
+        } else {
+            res.send("Message Saved Successfully");
+        }
+    });
+
+});
