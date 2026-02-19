@@ -1,12 +1,20 @@
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 var express=require("express");
 var fileuploader=require("express-fileupload");
 var app=express();
 
 
- const genAI = new GoogleGenerativeAI("AIzaSyCRDU-ymtE--ynB6QRrqlOJXEaX-JBd2EA");
- const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+const nodemailer = require("nodemailer");
+const otpStore = {}; // temporary in-memory store
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "rabiadabra@gmail.com",      // your Gmail
+        pass: "tzzf sifm pswq xzny"           // Gmail App Password (not your real password)
+    }
+});
 
 var cloudinary=require("cloudinary").v2;
 var mysql2=require("mysql2");
@@ -45,20 +53,91 @@ mySqlVen.connect(function (errKuch) {
 
 app.get("/signup-one", function (req, res) {
     let emailid = req.query.txtEmail;
-    let pwd = req.query.txtPwd;
-    let usertype = req.query.usertype;
+    let pwd     = req.query.txtPwd;
+    let usertype= req.query.usertype;
 
+    let otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    otpStore[emailid] = {
+        otp: otp,
+        pwd: pwd,
+        usertype: usertype,
+        expires: Date.now() + 5 * 60 * 1000  // 5 minutes
+    };
+
+    let mailOptions = {
+        from: "your_gmail@gmail.com",
+        to: emailid,
+        subject: "Your OTP for Signup",
+        html: `
+        <div style="font-family:Arial;max-width:480px;margin:auto;padding:30px;
+                    border:1px solid #ddd;border-radius:12px;">
+          <h2 style="color:#0d6efd;">Email Verification</h2>
+          <p>Your OTP is valid for 5 minutes:</p>
+          <div style="font-size:38px;font-weight:bold;letter-spacing:12px;
+                      color:#0d6efd;margin:24px 0;text-align:center;">${otp}</div>
+          <p style="color:#999;font-size:12px;">If you didn't request this, ignore this email.</p>
+        </div>`
+    };
+
+    transporter.sendMail(mailOptions, function (err) {
+        if (err) { res.send("Email send failed"); }
+        else      { res.send("OTP_SENT"); }
+    });
+});
+// verify OTP — saves to DB on success
+app.get("/verify-otp", function (req, res) {
+    let email  = req.query.email;
+    let otp    = req.query.otp;
+    let record = otpStore[email];
+
+    if (!record) return res.send("OTP Expired. Signup again.");
+    if (Date.now() > record.expires) {
+        delete otpStore[email];
+        return res.send("OTP Expired. Signup again.");
+    }
+    if (record.otp !== otp) return res.send("Wrong OTP. Try again.");
+
+    // OTP correct — now save to your existing DB
     mySqlVen.query(
         "INSERT INTO users (emailid, pwd, usertype, status, dos) VALUES (?, ?, ?, 1, CURRENT_DATE())",
-        [emailid, pwd, usertype],
+        [email, record.pwd, record.usertype],
         function (errKuch) {
-            if (errKuch == null){
-                res.send("Record Saved Successfully.");}
-            else{
-            
-                res.send("Server error " + errKuch.message);}
+            delete otpStore[email];
+            if (errKuch == null) { res.send("SUCCESS"); }
+            else { res.send("Server error " + errKuch.message); }
         }
     );
+});
+
+// resend OTP
+app.get("/resend-otp", function (req, res) {
+    let email  = req.query.email;
+    let record = otpStore[email];
+
+    if (!record) return res.send("Session expired. Signup again.");
+
+    let newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    otpStore[email].otp     = newOtp;
+    otpStore[email].expires = Date.now() + 5 * 60 * 1000;
+
+    let mailOptions = {
+        from: "your_gmail@gmail.com",
+        to: email,
+        subject: "Resend OTP - Signup",
+        html: `
+        <div style="font-family:Arial;max-width:480px;margin:auto;padding:30px;
+                    border:1px solid #ddd;border-radius:12px;">
+          <h2 style="color:#0d6efd;">New OTP</h2>
+          <div style="font-size:38px;font-weight:bold;letter-spacing:12px;
+                      color:#0d6efd;margin:24px 0;text-align:center;">${newOtp}</div>
+        </div>`
+    };
+
+    transporter.sendMail(mailOptions, function (err) {
+        if (err) { res.send("Resend failed."); }
+        else      { res.send("New OTP sent!"); }
+    });
 });
 app.get("/do-login", function (req, res) {
     let emailid = req.query.loginEmail;
