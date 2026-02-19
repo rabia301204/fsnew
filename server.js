@@ -78,7 +78,13 @@ app.get("/signup-one", function (req, res) {
                       color:#0d6efd;margin:24px 0;text-align:center;">${otp}</div>
           <p style="color:#999;font-size:12px;">If you didn't request this, ignore this email.</p>
         </div>`
-    };
+    };transporter.sendMail(mailOptions, function (err) {
+    if (err) { 
+        console.log("MAIL ERROR:", err.message);  // ADD THIS
+        res.send("Email send failed"); 
+    }
+    else { res.send("OTP_SENT"); }
+});
 
     transporter.sendMail(mailOptions, function (err) {
         if (err) { res.send("Email send failed"); }
