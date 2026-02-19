@@ -11,8 +11,8 @@ const otpStore = {}; // temporary in-memory store
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "rabiadabra@gmail.com",      // your Gmail
-        pass: "tzzf sifm pswq xzny"           // Gmail App Password (not your real password)
+        user:process.env.GMAIL_USER||"rabiadabra@gmail.com",      // your Gmail
+        pass: process.env.GMAIL_PASS ||"tzzfsifmpswqxzny"         // Gmail App Password (not your real password)
     }
 });
 
@@ -66,7 +66,7 @@ app.get("/signup-one", function (req, res) {
     };
 
     let mailOptions = {
-        from: "your_gmail@gmail.com",
+        from: process.env.GMAIL_USER||"rabiadabra@gmail.com",
         to: emailid,
         subject: "Your OTP for Signup",
         html: `
@@ -122,7 +122,7 @@ app.get("/resend-otp", function (req, res) {
     otpStore[email].expires = Date.now() + 5 * 60 * 1000;
 
     let mailOptions = {
-        from: "your_gmail@gmail.com",
+        from: process.env.GMAIL_USER||"rabiadabra@gmail.com",
         to: email,
         subject: "Resend OTP - Signup",
         html: `
